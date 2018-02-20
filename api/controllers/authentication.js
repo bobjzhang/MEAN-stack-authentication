@@ -1,21 +1,30 @@
 var passport = require('passport');
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
+var nodemailer = require('nodemailer');
 
 var sendJSONresponse = function(res, status, content) {
   res.status(status);
   res.json(content);
 };
 
+var sendVerificationEmail = function(mailOptions) {
+  return nodemailer.createTestAccount((err, account) => {
+    let transporter = nodemailer.createTransport({
+        host: 'smtp.ethereal.email',
+        port: 587,
+        secure: false,
+        auth: {
+            user: account.user,
+            pass: account.pass,
+        }
+    });
+
+    return transporter.sendMail(mailOptions);
+  });  
+};
+
 module.exports.register = function(req, res) {
-
-  // if(!req.body.name || !req.body.email || !req.body.password) {
-  //   sendJSONresponse(res, 400, {
-  //     "message": "All fields required"
-  //   });
-  //   return;
-  // }
-
   var user = new User();
 
   user.name = req.body.name;
@@ -30,19 +39,24 @@ module.exports.register = function(req, res) {
     res.json({
       "token" : token
     });
+  // TODO: Figure out why createTestAccount is not working  
+  // }).then(() => {
+  //   return sendVerificationEmail({
+  //     from: 'MEAN Stack Authentication', 
+  //     to: user.email, 
+  //     subject: 'Hello', 
+  //     text: 'Verify Email',
+  //     html: '<b>Verify Email</b>' 
+  //   });
+  // }).then((error, info) => {
+  //   console.log('Message sent: %s', info.messageId);
+  //   console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));    
+  }).catch((error) => {
+    console.log(error);
   });
-
 };
 
 module.exports.login = function(req, res) {
-
-  // if(!req.body.email || !req.body.password) {
-  //   sendJSONresponse(res, 400, {
-  //     "message": "All fields required"
-  //   });
-  //   return;
-  // }
-
   passport.authenticate('local', function(err, user, info){
     var token;
 
