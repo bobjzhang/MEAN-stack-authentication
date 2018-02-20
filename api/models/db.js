@@ -1,9 +1,7 @@
 var mongoose = require('mongoose');
 var gracefulShutdown;
-var dbURI = 'mongodb://localhost/meanAuth';
-if (process.env.NODE_ENV === 'production') {
-  dbURI = process.env.MONGOLAB_URI;
-}
+const MONGOLAB_URI = "mongodb://bob:makersights@ds241658.mlab.com:41658/maker-sights-auth";
+dbURI = MONGOLAB_URI;
 
 mongoose.connect(dbURI);
 

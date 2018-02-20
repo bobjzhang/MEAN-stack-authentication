@@ -12,20 +12,17 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var cors = require('cors');
+
 // [SH] Require Passport
 var passport = require('passport');
-
 // [SH] Bring in the data model
 require('./api/models/db');
 // [SH] Bring in the Passport config after model is defined
 require('./api/config/passport');
-
-
 // [SH] Bring in the routes for the API (delete the default routes)
+
 var routesApi = require('./api/routes/index');
-
 var app = express();
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
